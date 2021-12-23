@@ -21,9 +21,7 @@
         \::/____/                \:|   |                  \::/    /                \::/    /                \::/    /        
                                   \|___|                   \/____/                  \/____/                  \/____/         
                                                                                                                      
- *
- * SPDX-License-Identifier: MIT
- */
+SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
 import "hardhat/console.sol";
