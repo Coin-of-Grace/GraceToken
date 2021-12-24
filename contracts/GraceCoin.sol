@@ -98,9 +98,9 @@ abstract contract Tokenomics {
      * @dev To add/edit/remove fees scroll down to the `addFees` function below
      */
 
-     struct foundationAddress {"0x3De92b2308f4acBA823fA58A0C02633380d570eE"};
-    ambassadorsAddress internal ambassadorsAddress = 0x4E593164895a34cF119Cbc285Bc91ec13FD812fD;
-    cachbackAddress internal cachbackAddress = 0x3De92b2308f4acBA823fA58A0C02633380d570eE;
+    address internal burnAddress = foundationAddress 0x3De92b2308f4acBA823fA58A0C02633380d570eE;
+    address internal burnAddress = ambassadorsAddress = 0x4E593164895a34cF119Cbc285Bc91ec13FD812fD;
+    address internal burnAddress = cachbackAddress = 0x3De92b2308f4acBA823fA58A0C02633380d570eE;
 
     
     enum FeeType { Antiwhale, Liquidity, Rfi, External, ExternalToCELO }
