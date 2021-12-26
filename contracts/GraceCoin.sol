@@ -9,11 +9,11 @@ import "./Grace-imports.sol";
 /**
  * Tokenomics:
  * 
- * Liquidity        5%
- * Redistribution   4%
+ * Liquidity        4%
+ * Redistribution   2%
  * Foundation       1%
- * Ambasadors       3%
- * Cachback         2%
+ * Ambasadors       2%
+ * Cachback         1%
  */
 
 abstract contract Tokenomics {
@@ -511,7 +511,7 @@ abstract contract Liquifier is Ownable, Manageable {
    
     function initializeLiquiditySwapper(Env env, uint256 maxTx, uint256 liquifyAmount) internal {
         _env = env;
-        if (_env == Env.MainnetV1){ _setRouterAddress(_mainnetRouterV1Address); }
+        if (_env == Env.MainnetV1){ _setRouterAddress(_mainnetRouterV2Address); }
         else if (_env == Env.MainnetV2){ _setRouterAddress(_mainnetRouterV2Address); }
         else /*(_env == Env.Testnet)*/{ _setRouterAddress(_testnetRouterAddress); }
 
@@ -520,7 +520,7 @@ abstract contract Liquifier is Ownable, Manageable {
 
     }
 
-    }
+
 
     /**
      * NOTE: passing the `contractTokenBalance` here is preferred to creating `balanceOfDelegate`
