@@ -5,7 +5,6 @@ pragma solidity ^0.8.4;
 import "hardhat/console.sol";
 import "./Grace-imports.sol";
 
-
 /**
  * Tokenomics:
  * 
@@ -476,7 +475,7 @@ abstract contract Liquifier is Ownable, Manageable {
 
     uint256 private withdrawableBalance;
 
-    enum Env {alfajores}
+    enum Env {Testnet, MainnetV1, MainnetV2}
     Env private _env;
 
     // UbeSwap 
@@ -550,9 +549,12 @@ abstract contract Liquifier is Ownable, Manageable {
      * swapping and liquifying (contract) tokens
      */
     function _setRouterAddress(address router) private {
-        IUniswapV2Router02 _newPUniswapRouter = IUniswapV2Router02(router);
-        _pair = /*IUniswapV2Factory*/(_newPUniswapRouter.factory()).createPair(address(this), _newPUniswapRouter.CELO());
-        _router = _newPUniswapRouter;
+        IUniswapV2Router02 _newUniswapRouter = IUniswapV2Router02(router);
+        _pair = IUniswapV2Factory(_newUniswapRouter.factory()).createPair(
+            address(this),
+            _newUniswapRouter.CELO()
+        );
+        _router = _newUniswapRouter;
         emit RouterSet(router);
     }
     
@@ -606,7 +608,7 @@ abstract contract Liquifier is Ownable, Manageable {
         _approveDelegate(address(this), address(_router), tokenAmount);
 
         // add tahe liquidity
-        (uint256 tokenAmountSent, uint256 ethAmountSent, uint256 liquidity) = _router.addLiquidityETH{value: celoAmount}(
+        (uint256 tokenAmountSent, uint256 ethAmountSent, uint256 liquidity) = _router.addLiquidityCELO{value: celoAmount}(
             address(this),
             tokenAmount,
             // Bounds the extent to which the CELO/token price can go up before the transaction reverts. 
