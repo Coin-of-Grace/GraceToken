@@ -1,27 +1,5 @@
+//SPDX-License-Identifier: MIT
 
-           _____                    _____                    _____                    _____                    _____          
-         /\    \                  /\    \                  /\    \                  /\    \                  /\    \         
-        /::\    \                /::\    \                /::\    \                /::\    \                /::\    \        
-       /::::\    \              /::::\    \              /::::\    \              /::::\    \              /::::\    \       
-      /::::::\    \            /::::::\    \            /::::::\    \            /::::::\    \            /::::::\    \      
-     /:::/\:::\    \          /:::/\:::\    \          /:::/\:::\    \          /:::/\:::\    \          /:::/\:::\    \     
-    /:::/  \:::\    \        /:::/__\:::\    \        /:::/__\:::\    \        /:::/  \:::\    \        /:::/__\:::\    \    
-   /:::/    \:::\    \      /::::\   \:::\    \      /::::\   \:::\    \      /:::/    \:::\    \      /::::\   \:::\    \   
-  /:::/    / \:::\    \    /::::::\   \:::\    \    /::::::\   \:::\    \    /:::/    / \:::\    \    /::::::\   \:::\    \  
- /:::/    /   \:::\ ___\  /:::/\:::\   \:::\____\  /:::/\:::\   \:::\    \  /:::/    /   \:::\    \  /:::/\:::\   \:::\    \ 
-/:::/____/  ___\:::|    |/:::/  \:::\   \:::|    |/:::/  \:::\   \:::\____\/:::/____/     \:::\____\/:::/__\:::\   \:::\____\
-\:::\    \ /\  /:::|____|\::/   |::::\  /:::|____|\::/    \:::\  /:::/    /\:::\    \      \::/    /\:::\   \:::\   \::/    /
- \:::\    /::\ \::/    /  \/____|:::::\/:::/    /  \/____/ \:::\/:::/    /  \:::\    \      \/____/  \:::\   \:::\   \/____/ 
-  \:::\   \:::\ \/____/         |:::::::::/    /            \::::::/    /    \:::\    \               \:::\   \:::\    \     
-   \:::\   \:::\____\           |::|\::::/    /              \::::/    /      \:::\    \               \:::\   \:::\____\    
-    \:::\  /:::/    /           |::| \::/____/               /:::/    /        \:::\    \               \:::\   \::/    /    
-     \:::\/:::/    /            |::|  ~|                    /:::/    /          \:::\    \               \:::\   \/____/     
-      \::::::/    /             |::|   |                   /:::/    /            \:::\    \               \:::\    \         
-       \::::/    /              \::|   |                  /:::/    /              \:::\____\               \:::\____\        
-        \::/____/                \:|   |                  \::/    /                \::/    /                \::/    /        
-                                  \|___|                   \/____/                  \/____/                  \/____/         
-                                                                                                                     
-SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
 import "hardhat/console.sol";
@@ -98,9 +76,9 @@ abstract contract Tokenomics {
      * @dev To add/edit/remove fees scroll down to the `addFees` function below
      */
 
-    address internal burnAddress = foundationAddress 0x3De92b2308f4acBA823fA58A0C02633380d570eE;
-    address internal burnAddress = ambassadorsAddress = 0x4E593164895a34cF119Cbc285Bc91ec13FD812fD;
-    address internal burnAddress = cachbackAddress = 0x3De92b2308f4acBA823fA58A0C02633380d570eE;
+    address internal foundationAddress = 0x3De92b2308f4acBA823fA58A0C02633380d570eE;
+    address internal ambassadorsAddress = 0x4E593164895a34cF119Cbc285Bc91ec13FD812fD;
+    address internal cachbackAddress = 0x3De92b2308f4acBA823fA58A0C02633380d570eE;
 
     
     enum FeeType { Antiwhale, Liquidity, Rfi, External, ExternalToCELO }
@@ -137,9 +115,10 @@ abstract contract Tokenomics {
          */ 
         _addFee(FeeType.Rfi, 40, address(this) ); 
         _addFee(FeeType.Liquidity, 50, address(this) );
-        _addFee(FeeType.External, 20, address(this) );
-        _addFee(FeeType.External, 10, cachbackAddress(this) );
-        _addFee(FeeType.External, 30, ambassadorsAddress(this) );
+        _addFee(FeeType.External, 20, cachbackAddress );
+        _addFee(FeeType.External, 30, ambassadorsAddress );
+        _addFee(FeeType.External, 10, foundationAddress );
+
 
         /// @notice Explain to an end user what this does
         /// @dev Explain to a developer any extra details
@@ -523,19 +502,23 @@ abstract contract Liquifier is Ownable, Manageable {
     }
 
     event RouterSet(address indexed router);
-    event SwapAndLiquify(uint256 tokensSwapped, uint256 ethReceived, uint256 tokensIntoLiquidity);
+    event SwapAndLiquify(uint256 tokensSwapped, uint256 celoReceived, uint256 tokensIntoLiquidity);
     event SwapAndLiquifyEnabledUpdated(bool enabled);
-    event LiquidityAdded(uint256 tokenAmountSent, uint256 ethAmountSent, uint256 liquidity);
+    event LiquidityAdded(uint256 tokenAmountSent, uint256 celoAmountSent, uint256 liquidity);
 
     receive() external payable {}
 
+   
     function initializeLiquiditySwapper(Env env, uint256 maxTx, uint256 liquifyAmount) internal {
         _env = env;
-        if (_env == Env.MainnetV1){ _setRouterAddress(_mainnetRouterV2Address); }
-        else if (_env == Env.Testnet){ _setRouterAddress(_testnetRouterAddress); }
+        if (_env == Env.MainnetV1){ _setRouterAddress(_mainnetRouterV1Address); }
+        else if (_env == Env.MainnetV2){ _setRouterAddress(_mainnetRouterV2Address); }
+        else /*(_env == Env.Testnet)*/{ _setRouterAddress(_testnetRouterAddress); }
 
         maxTransactionAmount = maxTx;
         numberOfTokensToSwapToLiquidity = liquifyAmount;
+
+    }
 
     }
 
